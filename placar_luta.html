@@ -2,96 +2,83 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <title>Placar de Luta Profissional</title>
+    <title>Painel de Controle MMA / UFC</title>
     <style>
-        html, body {
-            margin: 0; padding: 0; background: transparent;
-            font-family: 'Arial', sans-serif; overflow: hidden;
-            width: 100%; height: 100%;
-        }
-        
-        /* Barra longa cinza escuro */
-        .fight-scoreboard {
-            width: 100%; height: 60px;
-            background: #222222; border: 2px solid #333;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.5);
-            border-radius: 4px; display: flex;
-            box-sizing: border-box; color: #ffffff;
-            position: absolute; top: 10px;
-        }
-
-        /* Lados dos Lutadores */
-        .fighter-side {
-            flex: 1; display: flex; align-items: center;
-            box-sizing: border-box; padding: 0 15px; font-weight: bold;
-        }
-        .fighter-side.left { justify-content: flex-start; text-align: left; }
-        .fighter-side.right { justify-content: flex-end; text-align: right; flex-direction: row-reverse; }
-
-        /* Nomes nas pontas externas */
-        .fighter-name { font-size: 20px; text-transform: uppercase; text-shadow: 1px 1px 2px #000; }
-
-        /* Barra de cor da roupa (lado de dentro) */
-        .corner-color {
-            width: 25px; height: 100%; transition: background-color 0.3s;
-            box-sizing: border-box; border-left: 1px solid #333; border-right: 1px solid #333;
-        }
-        .left .corner-color { margin-left: auto; }
-        .right .corner-color { margin-right: auto; }
-
-        /* Pontuações em destaque junto à cor */
-        .score-box {
-            font-size: 26px; font-weight: bold; min-width: 50px; color: #00ffcc;
-            height: 100%; display: flex; align-items: center; justify-content: center;
-            background: #151515; border-left: 1px solid #333; border-right: 1px solid #333;
-        }
-
-        /* Caixa de Faltas/Punições pequena ao lado do ponto */
-        .penalty-box {
-            font-size: 14px; font-weight: bold; min-width: 28px; color: #cc3333;
-            height: 100%; display: flex; align-items: center; justify-content: center;
-            background: #1e1111; border-left: 1px solid #333; border-right: 1px solid #333;
-        }
-
-        /* Bloco Central: Round e Cronômetro */
-        .center-block {
-            width: 200px; height: 100%; background: #111111;
-            display: flex; flex-direction: column; align-items: center;
-            justify-content: center; border-left: 2px solid #555; border-right: 2px solid #555;
-        }
-        .round-display { font-size: 12px; font-weight: bold; color: #aaa; text-transform: uppercase; letter-spacing: 1px; margin-bottom: -2px; }
-        .timer-display { font-size: 28px; font-weight: bold; font-family: 'Courier New', Courier, monospace; color: #ffffff; }
+        body { font-family: 'Arial', sans-serif; background: #202020; color: #fff; padding: 12px; margin: 0; font-size: 13px; }
+        .row { display: flex; gap: 10px; margin-bottom: 10px; }
+        .col { flex: 1; background: #2d2d2d; padding: 10px; border-radius: 6px; display: flex; flex-direction: column; gap: 6px; }
+        input[type="text"], select { background: #444; border: 1px solid #555; color: white; padding: 5px; border-radius: 4px; width: 100%; box-sizing: border-box; }
+        .btn-group { display: flex; gap: 4px; justify-content: center; }
+        button { background: #0066cc; color: white; border: none; padding: 6px 10px; border-radius: 4px; cursor: pointer; font-weight: bold; }
+        button:hover { background: #0052a3; }
+        button.minus { background: #cc3333; }
+        button.minus:hover { background: #b32424; }
+        .timer-panel { background: #151515; padding: 10px; border-radius: 6px; text-align: center; margin-bottom: 10px; border: 1px solid #444; }
+        .timer-display { font-size: 26px; font-weight: bold; font-family: monospace; color: #ffffff; margin-bottom: 6px; }
+        .section-title { font-size: 11px; font-weight: bold; color: #aaa; text-align: center; margin-top: 2px; text-transform: uppercase; }
+        .shortcuts-info { background: #151515; padding: 6px; border-radius: 4px; margin-top: 5px; font-size: 11px; color: #aaa; text-align: center; }
     </style>
 </head>
 <body>
 
-    <div class="fight-scoreboard">
-        <!-- LUTADOR ESQUERDA -->
-        <div class="fighter-side left">
-            <div id="view-name-1" class="fighter-name">LUTADOR A</div>
-            <div id="view-penalty-1" class="penalty-box">0</div>
-            <div id="view-score-1" class="score-box">0</div>
-            <div id="view-corner-1" class="corner-color" style="background-color: #000000;"></div>
+    <!-- CRONÔMETRO, ROUND E CATEGORIA DE PESO -->
+    <div class="timer-panel">
+        <div style="display:flex; justify-content:center; align-items:center; gap:10px; margin-bottom: 8px;">
+            <span style="font-weight:bold;">ROUND:</span>
+            <span id="lbl-round" style="font-size:16px; font-weight:bold; color:#ffcc00;">1</span>
+            <button class="minus" onclick="changeRound(-1)">-</button>
+            <button onclick="changeRound(1)">+</button>
+        </div>
+        
+        <div style="margin-bottom: 8px;">
+            <label style="font-size:11px; font-weight:bold; color:#aaa; display:block; margin-bottom:2px;">CATEGORIA DE PESO:</label>
+            <input type="text" id="ctrl-weight" value="PESO MOSCA" oninput="updateData()" style="text-align: center; font-weight: bold;">
         </div>
 
-        <!-- CENTRO (ROUND E TEMPO) -->
-        <div class="center-block">
-            <div id="view-round" class="round-display">ROUND 1</div>
-            <div id="view-timer" class="timer-display">05:00</div>
+        <div id="ctrl-timer-lbl" class="timer-display">05:00</div>
+        <div class="btn-group">
+            <button onclick="toggleTimer()" id="btn-start" style="background:#28a745;">Iniciar</button>
+            <button onclick="resetTimer()" style="background:#6c757d;">Zerar Tempo</button>
+            <select id="ctrl-time-set" onchange="setTimePreset(this.value)" style="width: auto; display: inline-block;">
+                <option value="300">5 min (Oficial)</option>
+                <option value="180">3 min</option>
+                <option value="60">1 min (Teste)</option>
+            </select>
         </div>
-
-        <!-- LUTADOR DIREITA -->
-        <div class="fighter-side right">
-            <div id="view-name-2" class="fighter-name">LUTADOR B</div>
-            <div id="view-penalty-2" class="penalty-box">0</div>
-            <div id="view-score-2" class="score-box">0</div>
-            <div id="view-corner-2" class="corner-color" style="background-color: #0022cc;"></div>
-        </div>
+        <div class="shortcuts-info">Dica: Clique no painel e use a <strong>Barra de Espaço</strong> para Play/Pause.</div>
     </div>
 
+    <div class="row">
+        <!-- LUTADOR ESQUERDA (CÓRNER 1) -->
+        <div class="col">
+            <div class="section-title">Lutador Esquerda</div>
+            <input type="text" id="ctrl-name-1" value="A. FIGUEIREDO - AM" oninput="updateData()">
+            <select id="ctrl-color-1" onchange="updateData()">
+                <option value="#000000" selected>Preto (Black)</option>
+                <option value="#ffffff">Branco (White)</option>
+                <option value="#cc3333">Vermelho (Red)</option>
+                <option value="#0022cc">Azul (Blue)</option>
+            </select>
+        </div>
+
+        <!-- LUTADOR DIREITA (CÓRNER 2) -->
+        <div class="col">
+            <div class="section-title">Lutador Direita</div>
+            <input type="text" id="ctrl-name-2" value="LUTADOR B" oninput="updateData()">
+            <select id="ctrl-color-2" onchange="updateData()">
+                <option value="#0022cc" selected>Azul (Blue)</option>
+                <option value="#000000">Preto (Black)</option>
+                <option value="#ffffff">Branco (White)</option>
+                <option value="#cc3333">Vermelho (Red)</option>
+            </select>
+        </div>
+    </div>
+    <button onclick="resetAll()" style="background:#555; width:100%; padding:8px; border:none; border-radius:4px; color:#fff; font-weight:bold; cursor:pointer; margin-top:5px;">Zerar Todo o Placar</button>
+
     <script>
-        // Canal de comunicação idêntico ao do painel_luta
+        let state = { round: 1, weight: "PESO MOSCA", name1: "A. FIGUEIREDO - AM", color1: "#000000", name2: "LUTADOR B", color2: "#0022cc", timeLeft: 300 };
         const bc = new BroadcastChannel('fight_global_scoreboard');
+        let timerInterval = null;
 
         function formatTime(seconds) {
             let m = Math.floor(seconds / 60).toString().padStart(2, '0');
@@ -99,23 +86,74 @@
             return `${m}:${s}`;
         }
 
-        bc.onmessage = (event) => {
-            const data = event.data;
-            document.getElementById('view-round').innerText = `ROUND ${data.round}`;
-            document.getElementById('view-timer').innerText = formatTime(data.timeLeft);
+        function updateData() {
+            state.weight = document.getElementById('ctrl-weight').value;
+            state.name1 = document.getElementById('ctrl-name-1').value;
+            state.color1 = document.getElementById('ctrl-color-1').value;
+            state.name2 = document.getElementById('ctrl-name-2').value;
+            state.color2 = document.getElementById('ctrl-color-2').value;
             
-            // Lado Esquerdo
-            document.getElementById('view-name-1').innerText = data.name1;
-            document.getElementById('view-score-1').innerText = data.score1;
-            document.getElementById('view-penalty-1').innerText = data.penalty1;
-            document.getElementById('view-corner-1').style.backgroundColor = data.color1;
-            
-            // Lado Direito
-            document.getElementById('view-name-2').innerText = data.name2;
-            document.getElementById('view-score-2').innerText = data.score2;
-            document.getElementById('view-penalty-2').innerText = data.penalty2;
-            document.getElementById('view-corner-2').style.backgroundColor = data.color2;
-        };
+            document.getElementById('lbl-round').innerText = state.round;
+            document.getElementById('ctrl-timer-lbl').innerText = formatTime(state.timeLeft);
+
+            bc.postMessage(state);
+        }
+
+        function changeRound(amount) {
+            state.round = Math.max(1, state.round + amount);
+            updateData();
+        }
+
+        function setTimePreset(seconds) {
+            clearInterval(timerInterval);
+            timerInterval = null;
+            document.getElementById('btn-start').innerText = "Iniciar";
+            document.getElementById('btn-start').style.background = "#28a745";
+            state.timeLeft = parseInt(seconds);
+            updateData();
+        }
+
+        function toggleTimer() {
+            if (timerInterval) {
+                clearInterval(timerInterval);
+                timerInterval = null;
+                document.getElementById('btn-start').innerText = "Iniciar";
+                document.getElementById('btn-start').style.background = "#28a745";
+            } else {
+                document.getElementById('btn-start').innerText = "Pausar";
+                document.getElementById('btn-start').style.background = "#ffc107";
+                timerInterval = setInterval(() => {
+                    if (state.timeLeft > 0) {
+                        state.timeLeft--;
+                        updateData();
+                    } else {
+                        clearInterval(timerInterval);
+                        timerInterval = null;
+                        document.getElementById('btn-start').innerText = "Iniciar";
+                        document.getElementById('btn-start').style.background = "#28a745";
+                    }
+                }, 1000);
+            }
+        }
+
+        window.addEventListener('keydown', function(event) {
+            if (document.activeElement.tagName === 'INPUT') return;
+            if (event.code === 'Space') {
+                event.preventDefault();
+                toggleTimer();
+            }
+        });
+
+        function resetTimer() {
+            setTimePreset(document.getElementById('ctrl-time-set').value);
+        }
+
+        function resetAll() {
+            state.round = 1;
+            resetTimer();
+        }
+
+        setTimeout(updateData, 300);
     </script>
 </body>
 </html>
