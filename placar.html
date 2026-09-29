@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <title>Placar de Tênis de Mesa - Empilhado</title>
+    <title>Placar de Tênis de Mesa - Cores Customizadas</title>
     <style>
         html, body {
             margin: 0;
@@ -14,7 +14,6 @@
             height: 100%;
         }
         
-        /* Container geral ajustado para o formato horizontal mais compacto */
         .scoreboard-container {
             width: 100%;
             height: 100%;
@@ -25,12 +24,12 @@
             overflow: hidden;
             border: 2px solid #333;
             box-sizing: border-box;
-            background: rgba(20, 20, 20, 0.95);
         }
         
+        /* NOVA COR DA TARJA: Grafite Escuro Profissional (Altere o #222222 se quiser mudar) */
         .category-bar {
-            background: #ffcc00;
-            color: #000;
+            background: #222222;
+            color: #ffcc00; /* Texto em amarelo para contrastar */
             font-weight: bold;
             text-align: center;
             padding: 4px 10px;
@@ -38,28 +37,35 @@
             text-transform: uppercase;
             letter-spacing: 1px;
             flex-shrink: 0;
+            border-bottom: 1px solid #333;
         }
         
         .scoreboard-view {
             display: flex;
-            flex-direction: column; /* Alinha um jogador abaixo do outro */
+            flex-direction: column;
             flex-grow: 1;
         }
         
-        /* Linha do jogador: organiza os elementos de ponta a ponta */
         .player-row {
             display: flex;
             align-items: center;
-            height: 50%; /* Metade do tamanho para cada jogador */
+            height: 50%;
             box-sizing: border-box;
             padding-left: 15px;
         }
         
+        /* CORES DE FUNDO PERSONALIZADAS PARA CADA JOGADOR */
+        /* Jogador 1 (Linha Superior): Azul Escuro Esportivo */
         .player-row.top {
+            background: rgba(10, 35, 66, 0.95);
             border-bottom: 1px solid #444;
         }
         
-        /* Indicador de Saque compacto ao lado do nome */
+        /* Jogador 2 (Linha Inferior): Vermelho Escuro Esportivo */
+        .player-row.bottom {
+            background: rgba(74, 16, 16, 0.95);
+        }
+        
         .serve-indicator {
             width: 10px;
             height: 10px;
@@ -72,44 +78,44 @@
         }
         .serve-indicator.active { visibility: visible; }
         
-        /* Espaço do Nome esticado ao máximo */
         .name {
             font-size: 20px;
             font-weight: bold;
             color: #fff;
-            flex-grow: 1; /* Ocupa todo o espaço do meio disponível */
+            flex-grow: 1;
             overflow: hidden;
             text-overflow: ellipsis;
             white-space: nowrap;
             padding-right: 15px;
         }
         
-        /* Sets e Pontos empurrados para o final direito de forma limpa */
+        /* Caixa de Sets (Fundo cinza escuro para destacar o número amarelo) */
         .sets {
             font-size: 22px;
             color: #ffcc00;
             font-weight: bold;
-            background: #252525;
+            background: rgba(25, 25, 25, 0.6);
             height: 100%;
             min-width: 50px;
             display: flex;
             align-items: center;
             justify-content: center;
-            border-left: 1px solid #444;
+            border-left: 1px solid rgba(255,255,255,0.1);
             flex-shrink: 0;
         }
         
+        /* Caixa de Pontos (Fundo preto translúcido para destacar o ciano) */
         .points {
             font-size: 32px;
             font-weight: bold;
             color: #00ffcc;
-            background: #151515;
+            background: rgba(10, 10, 10, 0.8);
             height: 100%;
             min-width: 65px;
             display: flex;
             align-items: center;
             justify-content: center;
-            border-left: 1px solid #444;
+            border-left: 1px solid rgba(255,255,255,0.1);
             flex-shrink: 0;
         }
     </style>
@@ -120,7 +126,6 @@
         <div id="view-category" class="category-bar">CAT ABSOLUTO F MASCULINO</div>
         
         <div class="scoreboard-view">
-            <!-- JOGADOR 1 (LINHA SUPERIOR) -->
             <div class="player-row top">
                 <div id="view-indicator-1" class="serve-indicator"></div>
                 <div id="view-name-1" class="name">Jogador 1</div>
@@ -128,7 +133,6 @@
                 <div id="view-points-1" class="points">0</div>
             </div>
             
-            <!-- JOGADOR 2 (LINHA INFERIOR) -->
             <div class="player-row bottom">
                 <div id="view-indicator-2" class="serve-indicator"></div>
                 <div id="view-name-2" class="name">Jogador 2</div>
@@ -140,7 +144,6 @@
 
     <script>
         const bc = new BroadcastChannel('tm_global_scoreboard');
-
         bc.onmessage = (event) => {
             const data = event.data;
             document.getElementById('view-category').innerText = data.category;
@@ -150,7 +153,6 @@
             document.getElementById('view-points-2').innerText = data.pts2;
             document.getElementById('view-sets-1').innerText = data.sets1;
             document.getElementById('view-sets-2').innerText = data.sets2;
-
             if (data.server === 1) {
                 document.getElementById('view-indicator-1').classList.add('active');
                 document.getElementById('view-indicator-2').classList.remove('active');
