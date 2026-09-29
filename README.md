@@ -15,7 +15,7 @@ Este projeto foi desenvolvido para suprir uma necessidade real em transmissões 
 
 ## 📊 Modalidades Inclusas no Repositório
 
-1. **Tênis de Mesa (`placar.html` / `painel.html`):** Layout moderno no formato empilhado vertical, ideal para suportar nomes longos e siglas de estados/clubes sem esmagar o texto. Inclui indicador visual de saque.
+1. **Tênis de Mesa (`placar_tenis.html` / `painel_tenis.html`):** Layout moderno no formato empilhado vertical, ideal para suportar nomes longos e siglas de estados/clubes sem esmagar o texto. Inclui indicador visual de saque.
 2. **Jiu-Jitsu (`placar_jiujitsu.html` / `painel_jiujitsu.html`):** Placar baseado nos padrões oficiais da **IBJJF**, contendo tarja superior escura para o cronômetro/categoria e blocos coloridos fixos para a contagem exata de **Pontos (Azul)**, **Punições (Amarelo)** e **Vantagens (Vermelho)**.
 3. **Lutas / MMA (`placar_luta.html` / `painel_luta.html`):** Visual minimalista inspirado nas transmissões do **UFC**, focado em exibir o Round atual, Cronômetro regressivo com comando de pausa rápida, indicador de córner (cor da bermuda) e uma tarja inferior estilizada com a categoria de peso do combate.
 4. Com o tempo, adicionarei mais placares e painéis pra outras modalidades esportivas, além de tarjas, como comentários, etc. Caso queira algo específico, entrar em contato por email. Farei com prazer.
@@ -24,7 +24,7 @@ Este projeto foi desenvolvido para suprir uma necessidade real em transmissões 
 
 ## 🛠️ Como Configurar no OBS Studio (Passo a Passo)
 
-Para colocar os placares e painéis para funcionar na sua transmissão, siga as instruções abaixo substituindo `SEU_USUARIO` pelo seu nome de usuário do GitHub:
+Para colocar os placares e painéis para funcionar na sua transmissão, siga as instruções abaixo:
 
 ### 1. Como embutir o Painel de Controle (Fixo na Interface do OBS)
 O Painel de Controle ficará acoplado ao lado das suas cenas ou do mixer de áudio para você clicar e pontuar.
