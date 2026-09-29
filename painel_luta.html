@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <title>Painel de Controle - Luta</title>
+    <title>Painel de Controle MMA / UFC</title>
     <style>
         body { font-family: 'Arial', sans-serif; background: #202020; color: #fff; padding: 12px; margin: 0; font-size: 13px; }
         .row { display: flex; gap: 10px; margin-bottom: 10px; }
@@ -16,11 +16,12 @@
         .timer-panel { background: #151515; padding: 10px; border-radius: 6px; text-align: center; margin-bottom: 10px; border: 1px solid #444; }
         .timer-display { font-size: 26px; font-weight: bold; font-family: monospace; color: #ffffff; margin-bottom: 6px; }
         .section-title { font-size: 11px; font-weight: bold; color: #aaa; text-align: center; margin-top: 2px; text-transform: uppercase; }
+        .shortcuts-info { background: #151515; padding: 6px; border-radius: 4px; margin-top: 5px; font-size: 11px; color: #aaa; text-align: center; }
     </style>
 </head>
 <body>
 
-    <!-- CRONÔMETRO E ROUND -->
+    <!-- CRONÔMETRO, ROUND E CATEGORIA DE PESO -->
     <div class="timer-panel">
         <div style="display:flex; justify-content:center; align-items:center; gap:10px; margin-bottom: 8px;">
             <span style="font-weight:bold;">ROUND:</span>
@@ -28,80 +29,54 @@
             <button class="minus" onclick="changeRound(-1)">-</button>
             <button onclick="changeRound(1)">+</button>
         </div>
+        
+        <div style="margin-bottom: 8px;">
+            <label style="font-size:11px; font-weight:bold; color:#aaa; display:block; margin-bottom:2px;">CATEGORIA DE PESO:</label>
+            <input type="text" id="ctrl-weight" value="PESO MOSCA" oninput="updateData()" style="text-align: center; font-weight: bold;">
+        </div>
+
         <div id="ctrl-timer-lbl" class="timer-display">05:00</div>
         <div class="btn-group">
             <button onclick="toggleTimer()" id="btn-start" style="background:#28a745;">Iniciar</button>
             <button onclick="resetTimer()" style="background:#6c757d;">Zerar Tempo</button>
             <select id="ctrl-time-set" onchange="setTimePreset(this.value)" style="width: auto; display: inline-block;">
-                <option value="300">5 min</option>
+                <option value="300">5 min (Oficial)</option>
                 <option value="180">3 min</option>
-                <option value="600">10 min</option>
                 <option value="60">1 min (Teste)</option>
             </select>
         </div>
+        <div class="shortcuts-info">Dica: Clique no painel e use a <strong>Barra de Espaço</strong> para Play/Pause.</div>
     </div>
 
     <div class="row">
-        <!-- LUTADOR ESQUERDA -->
+        <!-- LUTADOR ESQUERDA (CÓRNER 1) -->
         <div class="col">
+            <div class="section-title">Lutador Esquerda</div>
             <input type="text" id="ctrl-name-1" value="A. FIGUEIREDO - AM" oninput="updateData()">
             <select id="ctrl-color-1" onchange="updateData()">
                 <option value="#000000" selected>Preto (Black)</option>
                 <option value="#ffffff">Branco (White)</option>
                 <option value="#cc3333">Vermelho (Red)</option>
                 <option value="#0022cc">Azul (Blue)</option>
-                <option value="#28a745">Verde (Green)</option>
-                <option value="#ffcc00">Amarelo (Yellow)</option>
-                <option value="#6f42c1">Roxo (Purple)</option>
             </select>
-            
-            <div class="section-title">Pontos</div>
-            <div style="text-align:center; font-weight:bold; font-size:18px; color:#00ffcc;" id="lbl-score-1">0</div>
-            <div class="btn-group">
-                <button class="minus" onclick="changeValue('score1', -1)">-</button>
-                <button onclick="changeValue('score1', 1)">+</button>
-            </div>
-
-            <div class="section-title">Faltas</div>
-            <div style="text-align:center; font-weight:bold; font-size:14px; color:#cc3333;" id="lbl-penalty-1">0</div>
-            <div class="btn-group">
-                <button class="minus" onclick="changeValue('penalty1', -1)">-</button>
-                <button onclick="changeValue('penalty1', 1)">+</button>
-            </div>
         </div>
 
-        <!-- LUTADOR DIREITA -->
+        <!-- LUTADOR DIREITA (CÓRNER 2) -->
         <div class="col">
+            <div class="section-title">Lutador Direita</div>
             <input type="text" id="ctrl-name-2" value="LUTADOR B" oninput="updateData()">
             <select id="ctrl-color-2" onchange="updateData()">
                 <option value="#0022cc" selected>Azul (Blue)</option>
                 <option value="#000000">Preto (Black)</option>
                 <option value="#ffffff">Branco (White)</option>
                 <option value="#cc3333">Vermelho (Red)</option>
-                <option value="#28a745">Verde (Green)</option>
-                <option value="#ffcc00">Amarelo (Yellow)</option>
-                <option value="#6f42c1">Roxo (Purple)</option>
             </select>
-            
-            <div class="section-title">Pontos</div>
-            <div style="text-align:center; font-weight:bold; font-size:18px; color:#00ffcc;" id="lbl-score-2">0</div>
-            <div class="btn-group">
-                <button class="minus" onclick="changeValue('score2', -1)">-</button>
-                <button onclick="changeValue('score2', 1)">+</button>
-            </div>
-
-            <div class="section-title">Faltas</div>
-            <div style="text-align:center; font-weight:bold; font-size:14px; color:#cc3333;" id="lbl-penalty-2">0</div>
-            <div class="btn-group">
-                <button class="minus" onclick="changeValue('penalty2', -1)">-</button>
-                <button onclick="changeValue('penalty2', 1)">+</button>
-            </div>
         </div>
     </div>
-    <button onclick="resetAll()" style="background:#555; width:100%; padding:8px; border:none; border-radius:4px; color:#fff; font-weight:bold; cursor:pointer;">Zerar Todo o Placar</button>
+    <button onclick="resetAll()" style="background:#555; width:100%; padding:8px; border:none; border-radius:4px; color:#fff; font-weight:bold; cursor:pointer; margin-top:5px;">Zerar Todo o Placar</button>
 
     <script>
-        let state = { round: 1, name1: "A. FIGUEIREDO - AM", score1: 0, penalty1: 0, color1: "#000000", name2: "LUTADOR B", score2: 0, penalty2: 0, color2: "#0022cc", timeLeft: 300 };
+        let state = { round: 1, weight: "PESO MOSCA", name1: "A. FIGUEIREDO - AM", color1: "#000000", name2: "LUTADOR B", color2: "#0022cc", timeLeft: 300 };
         const bc = new BroadcastChannel('fight_global_scoreboard');
         let timerInterval = null;
 
@@ -112,6 +87,7 @@
         }
 
         function updateData() {
+            state.weight = document.getElementById('ctrl-weight').value;
             state.name1 = document.getElementById('ctrl-name-1').value;
             state.color1 = document.getElementById('ctrl-color-1').value;
             state.name2 = document.getElementById('ctrl-name-2').value;
@@ -119,17 +95,8 @@
             
             document.getElementById('lbl-round').innerText = state.round;
             document.getElementById('ctrl-timer-lbl').innerText = formatTime(state.timeLeft);
-            document.getElementById('lbl-score-1').innerText = state.score1;
-            document.getElementById('lbl-score-2').innerText = state.score2;
-            document.getElementById('lbl-penalty-1').innerText = state.penalty1;
-            document.getElementById('lbl-penalty-2').innerText = state.penalty2;
 
             bc.postMessage(state);
-        }
-
-        function changeValue(field, amount) {
-            state[field] = Math.max(0, state[field] + amount);
-            updateData();
         }
 
         function changeRound(amount) {
@@ -169,12 +136,20 @@
             }
         }
 
+        window.addEventListener('keydown', function(event) {
+            if (document.activeElement.tagName === 'INPUT') return;
+            if (event.code === 'Space') {
+                event.preventDefault();
+                toggleTimer();
+            }
+        });
+
         function resetTimer() {
             setTimePreset(document.getElementById('ctrl-time-set').value);
         }
 
         function resetAll() {
-            state.score1 = 0; state.score2 = 0; state.penalty1 = 0; state.penalty2 = 0; state.round = 1;
+            state.round = 1;
             resetTimer();
         }
 
