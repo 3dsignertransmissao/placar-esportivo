@@ -2,116 +2,119 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <title>Placar de Tênis de Mesa</title>
+    <title>Placar de Luta Profissional</title>
     <style>
         html, body {
-            margin: 0;
-            padding: 0;
-            background: transparent;
-            font-family: 'Arial', sans-serif;
-            overflow: hidden;
-            width: 100%;
-            height: 100%;
+            margin: 0; padding: 0; background: transparent;
+            font-family: 'Arial', sans-serif; overflow: hidden;
+            width: 100%; height: 100%;
         }
         
-        .scoreboard-container {
-            width: 100%;
-            height: 100%;
-            display: flex;
-            flex-direction: column;
+        /* Barra longa cinza escuro */
+        .fight-scoreboard {
+            width: 100%; height: 60px;
+            background: #222222; border: 2px solid #333;
             box-shadow: 0 4px 10px rgba(0,0,0,0.5);
-            border-radius: 8px;
-            overflow: hidden;
-            border: 2px solid #333;
-            box-sizing: border-box;
+            border-radius: 4px; display: flex;
+            box-sizing: border-box; color: #ffffff;
+            position: absolute; top: 10px;
         }
-        
-        .category-bar {
-            background: #ffcc00;
-            color: #000;
-            font-weight: bold;
-            text-align: center;
-            padding: 6px 10px;
-            font-size: 14px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            flex-shrink: 0;
+
+        /* Lados dos Lutadores */
+        .fighter-side {
+            flex: 1; display: flex; align-items: center;
+            box-sizing: border-box; padding: 0 15px; font-weight: bold;
         }
-        
-        .scoreboard-view {
-            display: flex;
-            background: rgba(20, 20, 20, 0.9);
-            color: #fff;
-            flex-grow: 1; 
+        .fighter-side.left { justify-content: flex-start; text-align: left; }
+        .fighter-side.right { justify-content: flex-end; text-align: right; flex-direction: row-reverse; }
+
+        /* Nomes nas pontas externas */
+        .fighter-name { font-size: 20px; text-transform: uppercase; text-shadow: 1px 1px 2px #000; }
+
+        /* Barra de cor da roupa (lado de dentro) */
+        .corner-color {
+            width: 25px; height: 100%; transition: background-color 0.3s;
+            box-sizing: border-box; border-left: 1px solid #333; border-right: 1px solid #333;
         }
-        
-        .player-row {
-            flex: 1;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 0 20px;
-            position: relative;
+        .left .corner-color { margin-left: auto; }
+        .right .corner-color { margin-right: auto; }
+
+        /* Pontuações em destaque junto à cor */
+        .score-box {
+            font-size: 26px; font-weight: bold; min-width: 50px; color: #00ffcc;
+            height: 100%; display: flex; align-items: center; justify-content: center;
+            background: #151515; border-left: 1px solid #333; border-right: 1px solid #333;
         }
-        
-        .player-row.left { border-right: 2px solid #444; }
-        
-        .name { font-size: 22px; font-weight: bold; max-width: 45%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-        .sets { font-size: 26px; color: #ffcc00; font-weight: bold; background: #222; padding: 4px 12px; border-radius: 4px; }
-        .points { font-size: 42px; font-weight: bold; color: #00ffcc; min-width: 55px; text-align: center; }
-        
-        .serve-indicator {
-            width: 12px;
-            height: 12px;
-            background: #fff;
-            border-radius: 50%;
-            visibility: hidden;
-            box-shadow: 0 0 8px #fff;
+
+        /* Caixa de Faltas/Punições pequena ao lado do ponto */
+        .penalty-box {
+            font-size: 14px; font-weight: bold; min-width: 28px; color: #cc3333;
+            height: 100%; display: flex; align-items: center; justify-content: center;
+            background: #1e1111; border-left: 1px solid #333; border-right: 1px solid #333;
         }
-        .serve-indicator.active { visibility: visible; }
+
+        /* Bloco Central: Round e Cronômetro */
+        .center-block {
+            width: 200px; height: 100%; background: #111111;
+            display: flex; flex-direction: column; align-items: center;
+            justify-content: center; border-left: 2px solid #555; border-right: 2px solid #555;
+        }
+        .round-display { font-size: 12px; font-weight: bold; color: #aaa; text-transform: uppercase; letter-spacing: 1px; margin-bottom: -2px; }
+        .timer-display { font-size: 28px; font-weight: bold; font-family: 'Courier New', Courier, monospace; color: #ffffff; }
     </style>
 </head>
 <body>
 
-    <div class="scoreboard-container">
-        <div id="view-category" class="category-bar">CAT ABSOLUTO F MASCULINO</div>
-        <div class="scoreboard-view">
-            <div class="player-row left">
-                <div id="view-indicator-1" class="serve-indicator"></div>
-                <div id="view-name-1" class="name">Jogador 1</div>
-                <div id="view-sets-1" class="sets">0</div>
-                <div id="view-points-1" class="points">0</div>
-            </div>
-            <div class="player-row right">
-                <div id="view-points-2" class="points">0</div>
-                <div id="view-sets-2" class="sets">0</div>
-                <div id="view-name-2" class="name">Jogador 2</div>
-                <div id="view-indicator-2" class="serve-indicator"></div>
-            </div>
+    <div class="fight-scoreboard">
+        <!-- LUTADOR ESQUERDA -->
+        <div class="fighter-side left">
+            <div id="view-name-1" class="fighter-name">LUTADOR A</div>
+            <div id="view-penalty-1" class="penalty-box">0</div>
+            <div id="view-score-1" class="score-box">0</div>
+            <div id="view-corner-1" class="corner-color" style="background-color: #000000;"></div>
+        </div>
+
+        <!-- CENTRO (ROUND E TEMPO) -->
+        <div class="center-block">
+            <div id="view-round" class="round-display">ROUND 1</div>
+            <div id="view-timer" class="timer-display">05:00</div>
+        </div>
+
+        <!-- LUTADOR DIREITA -->
+        <div class="fighter-side right">
+            <div id="view-name-2" class="fighter-name">LUTADOR B</div>
+            <div id="view-penalty-2" class="penalty-box">0</div>
+            <div id="view-score-2" class="score-box">0</div>
+            <div id="view-corner-2" class="corner-color" style="background-color: #0022cc;"></div>
         </div>
     </div>
 
     <script>
-        // Canal de comunicação via Internet / GitHub
-        const bc = new BroadcastChannel('tm_global_scoreboard');
+        // Canal de comunicação idêntico ao do painel_luta
+        const bc = new BroadcastChannel('fight_global_scoreboard');
+
+        function formatTime(seconds) {
+            let m = Math.floor(seconds / 60).toString().padStart(2, '0');
+            let s = (seconds % 60).toString().padStart(2, '0');
+            return `${m}:${s}`;
+        }
 
         bc.onmessage = (event) => {
             const data = event.data;
-            document.getElementById('view-category').innerText = data.category;
+            document.getElementById('view-round').innerText = `ROUND ${data.round}`;
+            document.getElementById('view-timer').innerText = formatTime(data.timeLeft);
+            
+            // Lado Esquerdo
             document.getElementById('view-name-1').innerText = data.name1;
+            document.getElementById('view-score-1').innerText = data.score1;
+            document.getElementById('view-penalty-1').innerText = data.penalty1;
+            document.getElementById('view-corner-1').style.backgroundColor = data.color1;
+            
+            // Lado Direito
             document.getElementById('view-name-2').innerText = data.name2;
-            document.getElementById('view-points-1').innerText = data.pts1;
-            document.getElementById('view-points-2').innerText = data.pts2;
-            document.getElementById('view-sets-1').innerText = data.sets1;
-            document.getElementById('view-sets-2').innerText = data.sets2;
-
-            if (data.server === 1) {
-                document.getElementById('view-indicator-1').classList.add('active');
-                document.getElementById('view-indicator-2').classList.remove('active');
-            } else {
-                document.getElementById('view-indicator-1').classList.remove('active');
-                document.getElementById('view-indicator-2').classList.add('active');
-            }
+            document.getElementById('view-score-2').innerText = data.score2;
+            document.getElementById('view-penalty-2').innerText = data.penalty2;
+            document.getElementById('view-corner-2').style.backgroundColor = data.color2;
         };
     </script>
 </body>
