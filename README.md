@@ -25,3 +25,17 @@ Este projeto foi desenvolvido para suprir uma necessidade real em transmissões 
 * **HTML5 & CSS3:** Para a estrutura, alinhamento simétrico e efeitos visuais translúcidos (transparência ajustada).
 * **JavaScript (Vanilla):** Lógica de funcionamento dos cronômetros e seletores.
 * **BroadcastChannel API:** Tecnologia nativa do navegador que faz a comunicação instantânea entre o que o operador clica no painel e o que o público assiste na tela da stream.
+
+---
+
+## ☕ Apoie o Projeto!
+
+Este projeto consumiu muitas horas de testes, lógica, erros e acertos para chegar a um formato profissional, leve e prático que o mercado não oferece gratuitamente. Se estes placares foram úteis para a sua transmissão, economizaram o seu tempo ou profissionalizaram a sua live, considere fazer uma contribuição para apoiar o desenvolvedor e incentivar novas modalidades!
+
+### 💰 Contribua via PIX:
+* **Chave PIX:** `caetano3dsigner@hotmail.com`
+* ![QR Code Pix](pix.png)
+* **Nome do Beneficiário:** [Luiz Carlos da Silva Caetano]
+* **Nota de apoio:** *Se puder, envie uma mensagem dizendo qual modalidade você está transmitindo com o placar!*
+
+Muito obrigado por apoiar o desenvolvimento independente e boas transmissões! 🎥🚀
