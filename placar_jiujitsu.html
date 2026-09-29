@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Placar de Jiu-Jitsu IBJJF</title>
+    <style>
+        html, body {
+            margin: 0; padding: 0; background: transparent;
+            font-family: 'Arial', sans-serif; overflow: hidden;
+            width: 100%; height: 100%;
+        }
+        
+        .scoreboard-container {
+            width: 100%; height: 100%;
+            display: flex; flex-direction: column;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+            border-radius: 6px; overflow: hidden;
+            border: 2px solid #333; box-sizing: border-box;
+        }
+
+        /* TARJA SUPERIOR: Preta, Categoria na esquerda e Tempo na direita */
+        .top-bar {
+            background: #000000; height: 35px;
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 0 15px; box-sizing: border-box;
+            border-bottom: 2px solid #222; flex-shrink: 0;
+        }
+        .category { color: #ffffff; font-size: 13px; font-weight: normal; text-transform: uppercase; letter-spacing: 0.5px; }
+        .timer { color: #ffffff; font-size: 22px; font-weight: bold; font-family: 'Courier New', Courier, monospace; }
+
+        /* CORPO DO PLACAR: Duas linhas empilhadas */
+        .scoreboard-view { display: flex; flex-direction: column; flex-grow: 1; }
+
+        /* Linhas com fundo cinza muito claro/branco fixo para contraste com texto preto */
+        .player-row {
+            display: flex; align-items: center; height: 50%;
+            box-sizing: border-box; padding-left: 15px; background: #f8f9fa;
+        }
+        .player-row.top-fighter { border-bottom: 1px solid #ddd; }
+        .player-row.bottom-fighter { background: #ffffff; }
+
+        /* Nome do Lutador na esquerda em preto */
+        .fighter-name {
+            font-size: 18px; font-weight: bold; color: #000000;
+            flex-grow: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+            padding-right: 10px;
+        }
+
+        /* DESTACADO EM AZUL: Retângulo de Pontos fixo para ambos os atletas */
+        .points-box {
+            font-size: 30px; font-weight: bold; color: #ffffff; background: #0055ff;
+            height: 100%; min-width: 65px; display: flex; align-items: center; justify-content: center;
+            border-left: 1px solid #333; flex-shrink: 0;
+        }
+
+        /* VANTAGENS NA PONTA: Fundo Branco com texto Vermelho destacado */
+        .advantage-box {
+            font-size: 22px; font-weight: bold; color: #cc0000; background: #ffffff;
+            height: 100%; min-width: 55px; display: flex; align-items: center; justify-content: center;
+            border-left: 1px solid #ddd; flex-shrink: 0;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="scoreboard-container">
+        <!-- BARRA PRETA SUPERIOR -->
+        <div class="top-bar">
+            <div id="view-category" class="category">MASCULINO / ADULTO / PRETA</div>
+            <div id="view-timer" class="timer">06:00</div>
+        </div>
+        
+        <!-- LINHAS DOS LUTADORES -->
+        <div class="scoreboard-view">
+            <!-- LUTADOR 1 (CIMA) -->
+            <div class="player-row top-fighter">
+                <div id="view-name-1" class="fighter-name">LUTADOR A</div>
+                <div id="view-score-1" class="points-box">0</div>
+                <div id="view-adv-1" class="advantage-box">0</div>
+            </div>
+            
+            <!-- LUTADOR 2 (BAIXO) -->
+            <div class="player-row bottom-fighter">
+                <div id="view-name-2" class="fighter-name">LUTADOR B</div>
+                <div id="view-score-2" class="points-box">0</div>
+                <div id="view-adv-2" class="advantage-box">0</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const bc = new BroadcastChannel('jj_global_scoreboard');
+
+        function formatTime(seconds) {
+            let m = Math.floor(seconds / 60).toString().padStart(2, '0');
+            let s = (seconds % 60).toString().padStart(2, '0');
+            return `${m}:${s}`;
+        }
+
+        bc.onmessage = (event) => {
+            const data = event.data;
+            document.getElementById('view-category').innerText = data.category;
+            document.getElementById('view-timer').innerText = formatTime(data.timeLeft);
+            
+            // Lutador 1
+            document.getElementById('view-name-1').innerText = data.name1;
+            document.getElementById('view-score-1').innerText = data.score1;
+            document.getElementById('view-adv-1').innerText = data.adv1;
+            
+            // Lutador 2
+            document.getElementById('view-name-2').innerText = data.name2;
+            document.getElementById('view-score-2').innerText = data.score2;
+            document.getElementById('view-adv-2').innerText = data.adv2;
+        };
+    </script>
+</body>
+</html>

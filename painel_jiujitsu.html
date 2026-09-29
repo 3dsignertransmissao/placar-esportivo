@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Painel de Controle - Jiu-Jitsu</title>
+    <style>
+        body { font-family: 'Arial', sans-serif; background: #202020; color: #fff; padding: 12px; margin: 0; font-size: 13px; }
+        .row { display: flex; gap: 10px; margin-bottom: 10px; }
+        .col { flex: 1; background: #2d2d2d; padding: 10px; border-radius: 6px; display: flex; flex-direction: column; gap: 6px; }
+        input[type="text"], select { background: #444; border: 1px solid #555; color: white; padding: 5px; border-radius: 4px; width: 100%; box-sizing: border-box; }
+        .btn-group { display: flex; gap: 4px; justify-content: center; }
+        button { background: #0066cc; color: white; border: none; padding: 6px 10px; border-radius: 4px; cursor: pointer; font-weight: bold; }
+        button:hover { background: #0052a3; }
+        button.minus { background: #cc3333; }
+        button.minus:hover { background: #b32424; }
+        .timer-panel { background: #151515; padding: 10px; border-radius: 6px; text-align: center; margin-bottom: 10px; border: 1px solid #444; }
+        .timer-display { font-size: 26px; font-weight: bold; font-family: monospace; color: #ffffff; margin-bottom: 6px; }
+        .section-title { font-size: 11px; font-weight: bold; color: #aaa; text-align: center; margin-top: 2px; text-transform: uppercase; }
+        .shortcuts-info { background: #151515; padding: 6px; border-radius: 4px; margin-top: 5px; font-size: 11px; color: #aaa; text-align: center; }
+    </style>
+</head>
+<body>
+
+    <!-- CATEGORIA E CRONÔMETRO -->
+    <div class="timer-panel">
+        <div style="margin-bottom: 8px;">
+            <input type="text" id="ctrl-category" value="MASCULINO / ADULTO / PRETA" oninput="updateData()">
+        </div>
+        <div id="ctrl-timer-lbl" class="timer-display">06:00</div>
+        <div class="btn-group">
+            <button onclick="toggleTimer()" id="btn-start" style="background:#28a745;">Iniciar</button>
+            <button onclick="resetTimer()" style="background:#6c757d;">Zerar Tempo</button>
+            <select id="ctrl-time-set" onchange="setTimePreset(this.value)" style="width: auto; display: inline-block;">
+                <option value="360">6 min</option>
+                <option value="300">5 min</option>
+                <option value="480">8 min</option>
+                <option value="600">10 min</option>
+            </select>
+        </div>
+        <div class="shortcuts-info">Dica: Clique no painel e use a <strong>Barra de Espaço</strong> para Play/Pause.</div>
+    </div>
+
+    <div class="row">
+        <!-- LUTADOR 1 (CIMA) -->
+        <div class="col">
+            <input type="text" id="ctrl-name-1" value="A. FIGUEIREDO - AM" oninput="updateData()">
+            
+            <div class="section-title" style="color:#00ffcc;">Pontos (Azul)</div>
+            <div style="text-align:center; font-weight:bold; font-size:18px;" id="lbl-score-1">0</div>
+            <div class="btn-group">
+                <button class="minus" onclick="changeValue('score1', -1)">-</button>
+                <button onclick="changeValue('score1', 1)">+</button>
+            </div>
+
+            <div class="section-title" style="color:#ff4444;">Vantagens (Vermelho)</div>
+            <div style="text-align:center; font-weight:bold; font-size:14px;" id="lbl-adv-1">0</div>
+            <div class="btn-group">
+                <button class="minus" onclick="changeValue('adv1', -1)">-</button>
+                <button onclick="changeValue('adv1', 1)">+</button>
+            </div>
+        </div>
+
+        <!-- LUTADOR 2 (BAIXO) -->
+        <div class="col">
+            <input type="text" id="ctrl-name-2" value="LUTADOR B" oninput="updateData()">
+            
+            <div class="section-title" style="color:#00ffcc;">Pontos (Azul)</div>
+            <div style="text-align:center; font-weight:bold; font-size:18px;" id="lbl-score-2">0</div>
+            <div class="btn-group">
+                <button class="minus" onclick="changeValue('score2', -1)">-</button>
+                <button onclick="changeValue('score2', 1)">+</button>
+            </div>
+
+            <div class="section-title" style="color:#ff4444;">Vantagens (Vermelho)</div>
+            <div style="text-align:center; font-weight:bold; font-size:14px;" id="lbl-adv-2">0</div>
+            <div class="btn-group">
+                <button class="minus" onclick="changeValue('adv2', -1)">-</button>
+                <button onclick="changeValue('adv2', 1)">+</button>
+            </div>
+        </div>
+    </div>
+    <button onclick="resetAll()" style="background:#555; width:100%; padding:8px; border:none; border-radius:4px; color:#fff; font-weight:bold; cursor:pointer;">Zerar Todo o Placar</button>
+
+    <script>
+        let state = { category: "MASCULINO / ADULTO / PRETA", name1: "A. FIGUEIREDO - AM", score1: 0, adv1: 0, name2: "LUTADOR B", score2: 0, adv2: 0, timeLeft: 360 };
+        const bc = new BroadcastChannel('jj_global_scoreboard');
+        let timerInterval = null;
+
+        function formatTime(seconds) {
+            let m = Math.floor(seconds / 60).toString().padStart(2, '0');
+            let s = (seconds % 60).toString().padStart(2, '0');
+            return `${m}:${s}`;
+        }
+
+        function updateData() {
+            state.category = document.getElementById('ctrl-category').value;
+            state.name1 = document.getElementById('ctrl-name-1').value;
+            state.name2 = document.getElementById('ctrl-name-2').value;
+            
+            document.getElementById('ctrl-timer-lbl').innerText = formatTime(state.timeLeft);
+            document.getElementById('lbl-score-1').innerText = state.score1;
+            document.getElementById('lbl-score-2').innerText = state.score2;
+            document.getElementById('lbl-adv-1').innerText = state.adv1;
+            document.getElementById('lbl-adv-2').innerText = state.adv2;
+
+            bc.postMessage(state);
+        }
+
+        function changeValue(field, amount) {
+            state[field] = Math.max(0, state[field] + amount);
+            updateData();
+        }
+
+        function setTimePreset(seconds) {
+            clearInterval(timerInterval);
+            timerInterval = null;
+            document.getElementById('btn-start').innerText = "Iniciar";
+            document.getElementById('btn-start').style.background = "#28a745";
+            state.timeLeft = parseInt(seconds);
+            updateData();
+        }
+
+        function toggleTimer() {
+            if (timerInterval) {
+                clearInterval(timerInterval);
+                timerInterval = null;
+                document.getElementById('btn-start').innerText = "Iniciar";
+                document.getElementById('btn-start').style.background = "#28a745";
+            } else {
+                document.getElementById('btn-start').innerText = "Pausar";
+                document.getElementById('btn-start').style.background = "#ffc107";
+                timerInterval = setInterval(() => {
+                    if (state.timeLeft > 0) {
+                        state.timeLeft--;
+                        updateData();
+                    } else {
+                        clearInterval(timerInterval);
+                        timerInterval = null;
+                        document.getElementById('btn-start').innerText = "Iniciar";
+                        document.getElementById('btn-start').style.background = "#28a745";
+                    }
+                }, 1000);
+            }
+        }
+
+        window.addEventListener('keydown', function(event) {
+            if (document.activeElement.tagName === 'INPUT') return;
+            if (event.code === 'Space') {
+                event.preventDefault();
+                toggleTimer();
+            }
+        });
+
+        function resetTimer() {
+            setTimePreset(document.getElementById('ctrl-time-set').value);
+        }
+
+        function resetAll() {
+            state.score1 = 0; state.score2 = 0; state.adv1 = 0; state.adv2 = 0;
+            resetTimer();
+        }
+
+        setTimeout(updateData, 300);
+    </script>
+</body>
+</html>
