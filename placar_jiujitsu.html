@@ -31,7 +31,7 @@
         /* CORPO DO PLACAR: Duas linhas empilhadas */
         .scoreboard-view { display: flex; flex-direction: column; flex-grow: 1; }
 
-        /* Linhas com fundo cinza muito claro/branco fixo para contraste com texto preto */
+        /* Linhas com fundo cinza muito claro/branco fixo */
         .player-row {
             display: flex; align-items: center; height: 50%;
             box-sizing: border-box; padding-left: 15px; background: #f8f9fa;
@@ -46,11 +46,18 @@
             padding-right: 10px;
         }
 
-        /* DESTACADO EM AZUL: Retângulo de Pontos fixo para ambos os atletas */
+        /* DESTACADO EM AZUL: Caixa de Pontos */
         .points-box {
             font-size: 30px; font-weight: bold; color: #ffffff; background: #0055ff;
             height: 100%; min-width: 65px; display: flex; align-items: center; justify-content: center;
-            border-left: 1px solid #333; flex-shrink: 0;
+            border-left: 1px solid #222; flex-shrink: 0;
+        }
+
+        /* NOVO - DESTACADO EM AMARELO: Caixa de Punições/Faltas oficiais da IBJJF */
+        .penalty-box {
+            font-size: 22px; font-weight: bold; color: #000000; background: #ffcc00;
+            height: 100%; min-width: 45px; display: flex; align-items: center; justify-content: center;
+            border-left: 1px solid rgba(0,0,0,0.15); flex-shrink: 0;
         }
 
         /* VANTAGENS NA PONTA: Fundo Branco com texto Vermelho destacado */
@@ -76,6 +83,7 @@
             <div class="player-row top-fighter">
                 <div id="view-name-1" class="fighter-name">LUTADOR A</div>
                 <div id="view-score-1" class="points-box">0</div>
+                <div id="view-penalty-1" class="penalty-box">0</div>
                 <div id="view-adv-1" class="advantage-box">0</div>
             </div>
             
@@ -83,6 +91,7 @@
             <div class="player-row bottom-fighter">
                 <div id="view-name-2" class="fighter-name">LUTADOR B</div>
                 <div id="view-score-2" class="points-box">0</div>
+                <div id="view-penalty-2" class="penalty-box">0</div>
                 <div id="view-adv-2" class="advantage-box">0</div>
             </div>
         </div>
@@ -105,11 +114,13 @@
             // Lutador 1
             document.getElementById('view-name-1').innerText = data.name1;
             document.getElementById('view-score-1').innerText = data.score1;
+            document.getElementById('view-penalty-1').innerText = data.penalty1;
             document.getElementById('view-adv-1').innerText = data.adv1;
             
             // Lutador 2
             document.getElementById('view-name-2').innerText = data.name2;
             document.getElementById('view-score-2').innerText = data.score2;
+            document.getElementById('view-penalty-2').innerText = data.penalty2;
             document.getElementById('view-adv-2').innerText = data.adv2;
         };
     </script>
