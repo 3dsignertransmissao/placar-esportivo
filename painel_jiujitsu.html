@@ -52,6 +52,13 @@
                 <button onclick="changeValue('score1', 1)">+</button>
             </div>
 
+            <div class="section-title" style="color:#ffcc00;">Punições (Amarelo)</div>
+            <div style="text-align:center; font-weight:bold; font-size:16px;" id="lbl-penalty-1">0</div>
+            <div class="btn-group">
+                <button class="minus" onclick="changeValue('penalty1', -1)">-</button>
+                <button onclick="changeValue('penalty1', 1)">+</button>
+            </div>
+
             <div class="section-title" style="color:#ff4444;">Vantagens (Vermelho)</div>
             <div style="text-align:center; font-weight:bold; font-size:14px;" id="lbl-adv-1">0</div>
             <div class="btn-group">
@@ -71,6 +78,13 @@
                 <button onclick="changeValue('score2', 1)">+</button>
             </div>
 
+            <div class="section-title" style="color:#ffcc00;">Punições (Amarelo)</div>
+            <div style="text-align:center; font-weight:bold; font-size:16px;" id="lbl-penalty-2">0</div>
+            <div class="btn-group">
+                <button class="minus" onclick="changeValue('penalty2', -1)">-</button>
+                <button onclick="changeValue('penalty2', 1)">+</button>
+            </div>
+
             <div class="section-title" style="color:#ff4444;">Vantagens (Vermelho)</div>
             <div style="text-align:center; font-weight:bold; font-size:14px;" id="lbl-adv-2">0</div>
             <div class="btn-group">
@@ -82,7 +96,7 @@
     <button onclick="resetAll()" style="background:#555; width:100%; padding:8px; border:none; border-radius:4px; color:#fff; font-weight:bold; cursor:pointer;">Zerar Todo o Placar</button>
 
     <script>
-        let state = { category: "MASCULINO / ADULTO / PRETA", name1: "A. FIGUEIREDO - AM", score1: 0, adv1: 0, name2: "LUTADOR B", score2: 0, adv2: 0, timeLeft: 360 };
+        let state = { category: "MASCULINO / ADULTO / PRETA", name1: "A. FIGUEIREDO - AM", score1: 0, penalty1: 0, adv1: 0, name2: "LUTADOR B", score2: 0, penalty2: 0, adv2: 0, timeLeft: 360 };
         const bc = new BroadcastChannel('jj_global_scoreboard');
         let timerInterval = null;
 
@@ -100,6 +114,8 @@
             document.getElementById('ctrl-timer-lbl').innerText = formatTime(state.timeLeft);
             document.getElementById('lbl-score-1').innerText = state.score1;
             document.getElementById('lbl-score-2').innerText = state.score2;
+            document.getElementById('lbl-penalty-1').innerText = state.penalty1;
+            document.getElementById('lbl-penalty-2').innerText = state.penalty2;
             document.getElementById('lbl-adv-1').innerText = state.adv1;
             document.getElementById('lbl-adv-2').innerText = state.adv2;
 
@@ -156,7 +172,7 @@
         }
 
         function resetAll() {
-            state.score1 = 0; state.score2 = 0; state.adv1 = 0; state.adv2 = 0;
+            state.score1 = 0; state.score2 = 0; state.penalty1 = 0; state.penalty2 = 0; state.adv1 = 0; state.adv2 = 0;
             resetTimer();
         }
 
