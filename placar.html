@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Placar de Tênis de Mesa - Empilhado</title>
+    <style>
+        html, body {
+            margin: 0;
+            padding: 0;
+            background: transparent;
+            font-family: 'Arial', sans-serif;
+            overflow: hidden;
+            width: 100%;
+            height: 100%;
+        }
+        
+        /* Container geral ajustado para o formato horizontal mais compacto */
+        .scoreboard-container {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.6);
+            border-radius: 8px;
+            overflow: hidden;
+            border: 2px solid #333;
+            box-sizing: border-box;
+            background: rgba(20, 20, 20, 0.95);
+        }
+        
+        .category-bar {
+            background: #ffcc00;
+            color: #000;
+            font-weight: bold;
+            text-align: center;
+            padding: 4px 10px;
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            flex-shrink: 0;
+        }
+        
+        .scoreboard-view {
+            display: flex;
+            flex-direction: column; /* Alinha um jogador abaixo do outro */
+            flex-grow: 1;
+        }
+        
+        /* Linha do jogador: organiza os elementos de ponta a ponta */
+        .player-row {
+            display: flex;
+            align-items: center;
+            height: 50%; /* Metade do tamanho para cada jogador */
+            box-sizing: border-box;
+            padding-left: 15px;
+        }
+        
+        .player-row.top {
+            border-bottom: 1px solid #444;
+        }
+        
+        /* Indicador de Saque compacto ao lado do nome */
+        .serve-indicator {
+            width: 10px;
+            height: 10px;
+            background: #fff;
+            border-radius: 50%;
+            visibility: hidden;
+            box-shadow: 0 0 8px #fff;
+            margin-right: 12px;
+            flex-shrink: 0;
+        }
+        .serve-indicator.active { visibility: visible; }
+        
+        /* Espaço do Nome esticado ao máximo */
+        .name {
+            font-size: 20px;
+            font-weight: bold;
+            color: #fff;
+            flex-grow: 1; /* Ocupa todo o espaço do meio disponível */
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            padding-right: 15px;
+        }
+        
+        /* Sets e Pontos empurrados para o final direito de forma limpa */
+        .sets {
+            font-size: 22px;
+            color: #ffcc00;
+            font-weight: bold;
+            background: #252525;
+            height: 100%;
+            min-width: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-left: 1px solid #444;
+            flex-shrink: 0;
+        }
+        
+        .points {
+            font-size: 32px;
+            font-weight: bold;
+            color: #00ffcc;
+            background: #151515;
+            height: 100%;
+            min-width: 65px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-left: 1px solid #444;
+            flex-shrink: 0;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="scoreboard-container">
+        <div id="view-category" class="category-bar">CAT ABSOLUTO F MASCULINO</div>
+        
+        <div class="scoreboard-view">
+            <!-- JOGADOR 1 (LINHA SUPERIOR) -->
+            <div class="player-row top">
+                <div id="view-indicator-1" class="serve-indicator"></div>
+                <div id="view-name-1" class="name">Jogador 1</div>
+                <div id="view-sets-1" class="sets">0</div>
+                <div id="view-points-1" class="points">0</div>
+            </div>
+            
+            <!-- JOGADOR 2 (LINHA INFERIOR) -->
+            <div class="player-row bottom">
+                <div id="view-indicator-2" class="serve-indicator"></div>
+                <div id="view-name-2" class="name">Jogador 2</div>
+                <div id="view-sets-2" class="sets">0</div>
+                <div id="view-points-2" class="points">0</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const bc = new BroadcastChannel('tm_global_scoreboard');
+
+        bc.onmessage = (event) => {
+            const data = event.data;
+            document.getElementById('view-category').innerText = data.category;
+            document.getElementById('view-name-1').innerText = data.name1;
+            document.getElementById('view-name-2').innerText = data.name2;
+            document.getElementById('view-points-1').innerText = data.pts1;
+            document.getElementById('view-points-2').innerText = data.pts2;
+            document.getElementById('view-sets-1').innerText = data.sets1;
+            document.getElementById('view-sets-2').innerText = data.sets2;
+
+            if (data.server === 1) {
+                document.getElementById('view-indicator-1').classList.add('active');
+                document.getElementById('view-indicator-2').classList.remove('active');
+            } else {
+                document.getElementById('view-indicator-1').classList.remove('active');
+                document.getElementById('view-indicator-2').classList.add('active');
+            }
+        };
+    </script>
+</body>
+</html>
