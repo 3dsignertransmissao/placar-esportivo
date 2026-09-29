@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <title>Placar Oficial Estilo UFC / MMA</title>
+    <title>Placar Oficial de MMA / UFC</title>
     <style>
         html, body {
             margin: 0; padding: 0; background: transparent;
@@ -10,87 +10,96 @@
             width: 100%; height: 100%;
         }
         
-        /* Container geral que junta o placar e a tarja de peso */
-        .ufc-container {
-            width: 650px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            position: absolute; top: 10px; left: 0;
-        }
-
-        /* Barra principal longa cinza escuro */
-        .fight-scoreboard {
-            width: 100%; height: 50px;
-            background: #1a1a1a; border: 1px solid #333;
+        /* Container geral que junta a barra principal e a tarja de peso */
+        .ufc-scoreboard {
+            width: 100%; display: flex; flex-direction: column;
             box-shadow: 0 4px 10px rgba(0,0,0,0.5);
-            border-radius: 4px 4px 0 0; display: flex;
-            box-sizing: border-box; color: #ffffff;
+            border-radius: 4px; overflow: hidden;
+            position: absolute; top: 10px;
         }
 
-        /* Lados dos Lutadores */
+        /* BARRA PRINCIPAL: Nomes, cores e cronômetro */
+        .main-bar {
+            height: 50px; background: #222222; border: 2px solid #333;
+            border-bottom: none; display: flex; color: #ffffff;
+        }
+
+        /* Lados dos Lutadores - Ajustado para distribuição flexível e simétrica */
         .fighter-side {
             flex: 1; display: flex; align-items: center;
-            box-sizing: border-box; padding: 0 15px; font-weight: bold;
+            box-sizing: border-box; position: relative;
         }
-        .fighter-side.left { justify-content: flex-start; text-align: left; }
-        .fighter-side.right { justify-content: flex-end; text-align: right; flex-direction: row-reverse; }
+        
+        /* Garante a inversão de ordem perfeita no lado direito */
+        .fighter-side.left { flex-direction: row; }
+        .fighter-side.right { flex-direction: row-reverse; }
 
-        /* Nomes nas pontas externas em caixa alta */
-        .fighter-name { font-size: 18px; text-transform: uppercase; letter-spacing: 0.5px; }
+        /* NOME CENTRALIZADO: Ocupa o espaço restante e centraliza o texto */
+        .fighter-name { 
+            flex-grow: 1;
+            text-align: center;
+            font-size: 18px; 
+            text-transform: uppercase; 
+            font-style: italic; 
+            text-shadow: 1px 1px 2px #000;
+            font-weight: bold;
+            overflow: hidden; 
+            text-overflow: ellipsis; 
+            white-space: nowrap;
+            padding: 0 15px; /* Evita que o nome cole nas bordas ou na cor */
+        }
 
-        /* Barra vertical fina com a cor da roupa (lado de dentro) */
+        /* Barra de cor da roupa (sempre do lado de dentro, colada no cronômetro) */
         .corner-color {
-            width: 15px; height: 100%; transition: background-color 0.2s;
-            box-sizing: border-box;
+            width: 25px; height: 100%; transition: background-color 0.3s;
+            box-sizing: border-box; border-left: 1px solid #333; border-right: 1px solid #333;
+            flex-shrink: 0;
         }
-        .left .corner-color { margin-left: auto; border-left: 1px solid #333; }
-        .right .corner-color { margin-right: auto; border-right: 1px solid #333; }
 
         /* Bloco Central: Round e Cronômetro */
         .center-block {
-            width: 180px; height: 100%; background: #000000;
+            width: 160px; height: 100%; background: #111111;
             display: flex; flex-direction: column; align-items: center;
-            justify-content: center; border-left: 1px solid #333; border-right: 1px solid #333;
+            justify-content: center; border-left: 2px solid #555; border-right: 2px solid #555;
+            flex-shrink: 0;
         }
-        .round-display { font-size: 11px; font-weight: bold; color: #ffcc00; text-transform: uppercase; letter-spacing: 1px; margin-bottom: -2px; }
+        .round-display { font-size: 11px; font-weight: bold; color: #aaa; text-transform: uppercase; letter-spacing: 1px; margin-bottom: -2px; }
         .timer-display { font-size: 24px; font-weight: bold; font-family: 'Courier New', Courier, monospace; color: #ffffff; }
 
-        /* TARJA MENOR INFERIOR: Exibe a Categoria de Peso (ex: PESO MOSCA) */
+        /* TARJA INFERIOR MENOR: Peso da Categoria (Fundo cinza escuro/preto) */
         .weight-bar {
-            width: auto; min-width: 180px; height: 22px;
-            background: rgba(0, 0, 0, 0.85); border: 1px solid #333; border-top: none;
-            color: #ffffff; font-size: 11px; font-weight: bold; text-transform: uppercase;
-            letter-spacing: 1.5px; display: flex; align-items: center; justify-content: center;
-            padding: 0 20px; border-radius: 0 0 4px 4px; box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+            height: 24px; background: #1a1a1a; border: 2px solid #333;
+            color: #ffcc00; font-size: 12px; font-weight: bold;
+            display: flex; align-items: center; justify-content: center;
+            text-transform: uppercase; letter-spacing: 2px; font-style: italic;
         }
     </style>
 </head>
 <body>
 
-    <div class="ufc-container">
-        <!-- PLACAR PRINCIPAL -->
-        <div class="fight-scoreboard">
-            <!-- LUTADOR ESQUERDA -->
+    <div class="ufc-scoreboard">
+        <!-- BARRA DE CIMA (DADOS DOS ATLETAS E TEMPO) -->
+        <div class="main-bar">
+            <!-- LUTADOR ESQUERDA (CÓRNER 1) -->
             <div class="fighter-side left">
                 <div id="view-name-1" class="fighter-name">LUTADOR A</div>
                 <div id="view-corner-1" class="corner-color" style="background-color: #000000;"></div>
             </div>
 
-            <!-- CENTRO (ROUND E TEMPO) -->
+            <!-- CRONÔMETRO CENTRAL -->
             <div class="center-block">
                 <div id="view-round" class="round-display">ROUND 1</div>
                 <div id="view-timer" class="timer-display">05:00</div>
             </div>
 
-            <!-- LUTADOR DIREITA -->
+            <!-- LUTADOR DIREITA (CÓRNER 2) -->
             <div class="fighter-side right">
                 <div id="view-name-2" class="fighter-name">LUTADOR B</div>
                 <div id="view-corner-2" class="corner-color" style="background-color: #0022cc;"></div>
             </div>
         </div>
 
-        <!-- TARJA DE CATEGORIA INFERIOR -->
+        <!-- TARJA DE BAIXO (PESO DA CATEGORIA) -->
         <div id="view-weight" class="weight-bar">PESO MOSCA</div>
     </div>
 
@@ -105,16 +114,13 @@
 
         bc.onmessage = (event) => {
             const data = event.data;
-            
             document.getElementById('view-round').innerText = `ROUND ${data.round}`;
             document.getElementById('view-timer').innerText = formatTime(data.timeLeft);
             document.getElementById('view-weight').innerText = data.weight;
             
-            // Atualiza Lutador 1
+            // Atualiza atletas e córneres
             document.getElementById('view-name-1').innerText = data.name1;
             document.getElementById('view-corner-1').style.backgroundColor = data.color1;
-            
-            // Atualiza Lutador 2
             document.getElementById('view-name-2').innerText = data.name2;
             document.getElementById('view-corner-2').style.backgroundColor = data.color2;
         };
